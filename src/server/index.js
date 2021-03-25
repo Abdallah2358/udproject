@@ -14,17 +14,20 @@ dotenv.config();
     'time': 'now'
 } */
 
-const apiKey = process.env.API_KEY   ;
+const apiKey = process.env.API_KEY;
 
-let  recivedText = 'After this, there is no turning back. You take the blue pill - the story ends, you wake up in your bed and believe whatever you want to believe. You take the red pill - you stay in Wonderland and I show you how deep the rabbit-hole goes.';
-async function postData( url ) 
-{
-     const response = await fetch(url)
-  .then(response => response.json())
-  .then(data => console.log(data));
-  return response.json();
+let receivedText ;
+
+let apiResponse;
+async function callMeaning(url) {
+    console.log("url : "+url)
+    const response = await fetch(url)
+    const data = await response.json()
+    console.log(data.sentence_list[0])
+    
+    return data.sentence_list[0];
 };
- let apiResponse = postData(`https://api.meaningcloud.com/sentiment-2.1?key=${apiKey}&lang=en&txt=${recivedText}&model=general`)
+
 
 const app = express()
 app.use(cors())
@@ -32,7 +35,7 @@ app.use(cors())
 app.use(bodyParser.json())
 // to use url encoded values
 app.use(bodyParser.urlencoded({
-  extended: true
+    extended: true
 }))
 
 app.use(express.static('dist'))
@@ -43,8 +46,22 @@ app.get('/', function (req, res) {
     res.sendFile('dist/index.html')
 })
 
+app.post('/receive', function (request, response) {
+    //code
+    receivedText = request.body.text;
+    //debugging 
+    console.log("data received by my server :");
+    console.log(receivedText);
+});
+
+
 app.get('/test', function (req, res) {
-    console.log(apiResponse)
+    callMeaning(`https://api.meaningcloud.com/sentiment-2.1?key=${apiKey}&lang=en&txt=${receivedText}&model=general`).then(
+    (res)=>{
+        apiResponse = res
+    }
+)
+    console.log("in fetch " + receivedText)
     res.json(apiResponse);
 
 })
