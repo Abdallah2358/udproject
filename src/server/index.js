@@ -16,16 +16,16 @@ dotenv.config();
 
 const apiKey = process.env.API_KEY;
 
-let receivedText ;
+let receivedText;
 
-let apiResponse;
+let apiResponse = {subjectivity : null , irony :null,  confidence:null , score_tag : null ,agreement: null  }
 async function callMeaning(url) {
-    console.log("url : "+url)
+    console.log("url : " + url)
     const response = await fetch(url)
     const data = await response.json()
-    console.log(data.sentence_list[0])
-    
-    return data.sentence_list[0];
+    console.log(data)
+
+    return data;
 };
 
 
@@ -56,12 +56,17 @@ app.post('/receive', function (request, response) {
 
 
 app.get('/test', function (req, res) {
-    callMeaning(`https://api.meaningcloud.com/sentiment-2.1?key=${apiKey}&lang=en&txt=${receivedText}&model=general`).then(
-    (res)=>{
-        apiResponse = res
-    }
-)
-    console.log("in fetch " + receivedText)
+    callMeaning(`https://api.meaningcloud.com/sentiment-2.1?key=${apiKey}&lang=en&txt=${receivedText}&model=general`)
+        .then(
+            (res) => {
+                apiResponse.subjectivity = res.subjectivity;
+                apiResponse.confidence = res.confidence;
+                apiResponse.irony = res.irony;
+                apiResponse.agreement = res.agreement;
+                apiResponse.score_tag=res.score_tag;
+            }
+        )
+    console.log("server sending data of :" + receivedText)
     res.json(apiResponse);
 
 })
