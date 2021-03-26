@@ -1,15 +1,18 @@
 function checkForName(inputText) {
     console.log("::: Running checkForName :::", inputText);
-    let names = [
-        "Picard",
-        "Janeway",
-        "Kirk",
-        "Archer",
-        "Georgiou"
+    let curses = [
+        'death',
+        'kill',
+        'idiot',
+        'stupid',
+        'donkey',
+        'kys',
+        'kill yourself',
+        'noob'
     ]
 
-    if(names.includes(inputText)) {
-        alert("Welcome, Captain!")
+    if(curses.includes(inputText)) {
+        alert("No cursing")
     }
 }
 
