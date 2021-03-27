@@ -1,19 +1,11 @@
 function checkForName(inputText) {
     console.log("::: Running checkForName :::", inputText);
-    let curses = [
-        'death',
-        'kill',
-        'idiot',
-        'stupid',
-        'donkey',
-        'kys',
-        'kill yourself',
-        'noob'
-    ]
 
-    if(curses.includes(inputText)) {
-        alert("No cursing")
+    if (!(inputText.includes('https') || inputText.includes('https'))) {
+        alert("Not a valid url ")
+        return 0
     }
+    return 1
 }
 
 export { checkForName }

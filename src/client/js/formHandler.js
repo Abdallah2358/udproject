@@ -2,35 +2,33 @@ function handleSubmit(event) {
     event.preventDefault()
 
     // check what text was put into the form field
-    let formText = { text: document.getElementById('name').value }
+    let formText = { url : document.getElementById('name').value }
 
 
-    Client.checkForName(formText.text)
-    console.log("::: Form Submitted :::");
+    if ( !(Client.checkForName(formText.url)) ) {
+        console.log("Not a valid url ");
+       return 0 
 
-    postData('/receive', formText).then(
+    }  
+    console.log("::: Form Submitted :::" + formText.url);
+    document.getElementById('results').innerHTML =  'loading data from api please wait'
+    fetch('http://localhost:8081/test', {
+        method: 'POST', // *GET, POST, PUT, DELETE, etc.
+        headers: {
+            'Content-Type': 'application/json'
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: JSON.stringify( formText )// body data type must match "Content-Type" header
+    })
+        .then(res => {
+            return res.json()
+        })
+        .then(data => {
+            document.getElementById('results').innerHTML = `Subjectivity :${data.subjectivity} , Agreement ${data.agreement} , Irony: ${data.irony} ,  Confidence : ${data.confidence} , Score Tag : ${data.score_tag}`
+            console.log(data)
+        })
 
-        fetch('http://localhost:8081/test')
-            .then(res => {
-                return res.json()
-            })
-            .then(data => {
-               document.getElementById('results').innerHTML = `Subjectivity :${data.subjectivity} , Agreement ${data.agreement} , Irony: ${data.irony} ,  Confidence : ${data.confidence} , Score Tag : ${data.score_tag}, ` 
-                console.log(data)
-            })
-    )
 
 }
 
 export { handleSubmit }
-const postData = async (url = '', data = {}) => {
-    const response = await fetch(url, {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        // Body data type must match "Content-Type" header        
-        body: JSON.stringify(data),
-    });
-}
